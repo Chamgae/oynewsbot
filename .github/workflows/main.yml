@@ -1,0 +1,29 @@
+name: Daily News Bot
+
+on:
+  schedule:
+    # 한국 시간(KST) 6, 9, 12, 15, 18시 설정 (UTC 기준 -9시간)
+    - cron: '0 21,0,3,6,9 * * *'
+  workflow_dispatch: # 우리가 직접 버튼 눌러 실행해볼 수 있게 만드는 기능
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 코드 가져오기
+        uses: actions/checkout@v3
+
+      - name: 파이썬 설치
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: 필요한 도구 설치
+        run: pip install -r requirements.txt
+
+      - name: 뉴스 수집 실행
+        env:
+          NAVER_ID: ${{ secrets.NAVER_ID }}
+          NAVER_SECRET: ${{ secrets.NAVER_SECRET }}
+          GOOGLE_JSON: ${{ secrets.GOOGLE_JSON }}
+        run: python main.py
